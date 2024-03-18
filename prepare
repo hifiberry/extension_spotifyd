@@ -1,0 +1,26 @@
+#!/bin/sh
+cd `dirname $0`
+. /etc/hifiberry.state
+
+if [ ! -f /data/extensiondata/spotify/spotifyd.conf ]; then
+  mkdir -p /data/extensiondata/spotify
+  cp spotifyd.conf.default /data/extensiondata/spotify/spotifyd.conf
+fi
+
+if [ ! -f /etc/dbus-1/system.d/spotify.conf ]; then
+
+cat <<EOF>/etc/dbus-1/system.d/spotify.conf
+<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+<busconfig>
+
+ <!-- Root can own the Spotify service -->
+  <policy user="999">
+    <allow own="org.mpris.MediaPlayer2.spotifyd"/>
+  </policy>
+
+</busconfig>
+EOF
+systemctl restart dbus
+
+fi

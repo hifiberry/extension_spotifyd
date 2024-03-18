@@ -6,7 +6,7 @@ ENV V_spotifyd=v0.3.5
 WORKDIR /usr/src/spotifyd
 RUN apt-get -y update && \
     apt-get install --no-install-recommends -y apt-transport-https ca-certificates git && \
-    git clone --depth 1 --branch=${V_spotifyd} https://github.com/Spotifyd/spotifyd.git .
+    git clone --depth 1 --branch=${V_spotifyd} https://github.com/Spotifyd/spotifyd.git . 
 
 # Don't do `cargo init` or --> error: `cargo init` cannot be run on existing Cargo packages
 # RUN cargo init

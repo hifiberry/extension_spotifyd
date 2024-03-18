@@ -11,23 +11,5 @@ sed -i "s/device *= *\"[^\"]*\"/device = \"$HW\"/g" $CFG
 sed -i "s/control *= *\"[^\"]*\"/control = \"$HW\"/g" $CFG
 sed -i "s/mixer *= *\"[^\"]*\"/mixer = \"$MIXER\"/g" $CFG
 
-if [ ! -f /etc/dbus-1/system.d/spotify.conf ]; then
-
-cat <<EOF>/etc/dbus-1/system.d/spotify.conf
-<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
- "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
-<busconfig>
-
- <!-- Root can own the Spotify service -->
-  <policy user="player">
-    <allow own="org.mpris.MediaPlayer2.spotifyd"/>
-  </policy>
-
-</busconfig>
-EOF
-systemctl restart dbus
-
-fi
-
-echo "Spotifyd has been reconfigured, restarting"
+echo "SpotifyD has been reconfigured, restarting"
 docker-compose restart
