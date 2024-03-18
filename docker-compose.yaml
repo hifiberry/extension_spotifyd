@@ -1,0 +1,18 @@
+version: '3'
+services:
+  spotify:
+    container_name: spotify
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    network_mode: host
+    devices:
+      - /dev/snd:/dev/snd
+    volumes:
+      - /usr/share/alsa:/usr/share/alsa
+      - /data/extensiondata/spotify/spotifyd.conf:/etc/spotifyd.conf
+      - /etc/asound.conf:/etc/asound.conf
+      - /run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
+    group_add:
+      - 2001
