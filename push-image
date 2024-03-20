@@ -1,0 +1,5 @@
+#!/bin/sh
+IMAGEID=$1
+docker tag $IMAGEID ghcr.io/hifiberry/extension_spotifyd:latest
+docker push ghcr.io/hifiberry/extension_spotifyd:latest
+
