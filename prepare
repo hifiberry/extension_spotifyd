@@ -2,14 +2,14 @@
 cd `dirname $0`
 . /etc/hifiberry.state
 
-if [ ! -f /data/extensiondata/spotify/spotifyd.conf ]; then
-  mkdir -p /data/extensiondata/spotify
-  cp spotifyd.conf.default /data/extensiondata/spotify/spotifyd.conf
+if [ ! -f /data/extensiondata/spotifyd/spotifyd.conf ]; then
+  mkdir -p /data/extensiondata/spotifyd
+  cp spotifyd.conf.default /data/extensiondata/spotifyd/spotifyd.conf
 fi
 
-if [ ! -f /etc/dbus-1/system.d/spotify.conf ]; then
+if [ ! -f /etc/dbus-1/system.d/spotifyd.conf ]; then
 
-cat <<EOF>/etc/dbus-1/system.d/spotify.conf
+cat <<EOF>/etc/dbus-1/system.d/spotifyd.conf
 <!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
  "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
 <busconfig>
