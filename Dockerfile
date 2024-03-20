@@ -11,6 +11,11 @@ WORKDIR /app
 # Clone the Spotifyd source code from GitHub
 RUN git clone https://github.com/Spotifyd/spotifyd.git .
 
+# Set client ID
+ARG SPOTIFY_CLIENT_ID
+RUN echo "Using Spotify client ID $SPOTIFY_CLIENT_ID"
+RUN sed -i "s/const CLIENT_ID: .*\$/const CLIENT_ID: \&str = \"$SPOTIFY_CLIENT_ID\";/" src/dbus_mpris.rs
+
 # Compile the source code
 RUN cargo build -j 4 --release --features dbus_mpris
 
