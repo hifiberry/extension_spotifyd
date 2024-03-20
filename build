@@ -1,4 +1,10 @@
 #!/bin/sh
+if [ "$SPOTIFY_CLIENT_ID" == "" ]; then
+ echo SPOTIFY_CLIENT_ID environment variable must be set to your own client ID
+ exit 1
+else
+ echo "Using Spotify client ID $SPOTIFY_CLIENT_ID"
+fi
 docker system prune -a
 docker build -t spotifyd .
 
