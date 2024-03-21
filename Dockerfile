@@ -38,6 +38,6 @@ COPY --from=builder /app/target/release/spotifyd /usr/local/bin/spotifyd
 WORKDIR /usr/local/bin
 
 # Run spotifyd
-CMD ["dbus-run-session", "/usr/local/bin/spotifyd", "--no-daemon"]
+CMD ["/usr/local/bin/spotifyd", "--no-daemon"]
 
 USER spotify
