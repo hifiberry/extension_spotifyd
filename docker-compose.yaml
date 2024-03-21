@@ -14,7 +14,7 @@ services:
       - /dev/snd:/dev/snd
     volumes:
       - /usr/share/alsa:/usr/share/alsa
-      - /data/extensiondata/spotifyd/spotifyd.conf:/etc/spotifyd.conf
+      - /etc/spotifyd/spotifyd.conf:/etc/spotifyd.conf
       - /etc/asound.conf:/etc/asound.conf
       - /run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
     group_add:

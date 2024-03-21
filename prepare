@@ -2,9 +2,13 @@
 cd `dirname $0`
 . /etc/hifiberry.state
 
-if [ ! -f /data/extensiondata/spotifyd/spotifyd.conf ]; then
-  mkdir -p /data/extensiondata/spotifyd
-  cp spotifyd.conf.default /data/extensiondata/spotifyd/spotifyd.conf
+if [ ! -f /etc/spotifyd.conf ]; then
+  cp spotifyd.conf.default /etc/spotifyd.conf
+fi
+
+grep "/etc/spotifyd.conf" /etc/config-files
+if [ "$?" != "0" ]; then
+  echo "/etc/spotifyd.conf">>/etc/config-files
 fi
 
 if [ ! -f /etc/dbus-1/system.d/spotifyd.conf ]; then
@@ -15,7 +19,7 @@ cat <<EOF>/etc/dbus-1/system.d/spotifyd.conf
 <busconfig>
 
  <!-- Root can own the Spotify service -->
-  <policy user="999">
+  <policy user="player">
     <allow own="org.mpris.MediaPlayer2.spotifyd"/>
   </policy>
 

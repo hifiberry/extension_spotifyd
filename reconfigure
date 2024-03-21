@@ -5,7 +5,7 @@ cd `dirname $0`
 HW=hw:${CURRENT_HW_SHORT}
 MIXER=${CURRENT_MIXER_CONTROL}
 
-CFG=/data/extensiondata/spotify/spotifyd.conf
+CFG=/etc/spotifyd.conf
 
 sed -i "s/device *= *\"[^\"]*\"/device = \"$HW\"/g" $CFG
 sed -i "s/control *= *\"[^\"]*\"/control = \"$HW\"/g" $CFG
