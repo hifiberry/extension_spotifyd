@@ -1,9 +1,23 @@
-# Use a base image with Rust toolchain
-FROM rust:latest AS builder
+FROM alpine:latest AS builder
+ARG CARGO_NET_GIT_FETCH_WITH_CLI=true
 
 # Install additional build dependencies
-RUN apt-get update && \
-    apt-get install -y git libasound2-dev libdbus-1-dev
+RUN apk -U --no-cache add \
+    git \
+    build-base \
+    avahi-dev \
+    autoconf \
+    automake \
+    libtool \
+    libdaemon-dev \
+    alsa-lib-dev \
+    libressl-dev \
+    libconfig-dev \
+    libstdc++ \
+    gcc \
+    rust \
+    cargo \
+    dbus-dev
 
 # Set working directory
 WORKDIR /app
@@ -20,16 +34,17 @@ RUN sed -i "s/const CLIENT_ID: .*\$/const CLIENT_ID: \&str = \"$SPOTIFY_CLIENT_I
 RUN cargo build -j 4 --release --features dbus_mpris
 
 # Create a new image
-FROM debian:stable-slim
+FROM alpine:latest
 
 # Install dependencies
-RUN apt-get update && \
-    apt-get install -yqq --no-install-recommends libasound2 dbus curl alsa-tools alsa-utils && \
-    rm -rf /var/lib/apt/lists/* && \
-    groupadd -r spotify && \
-    useradd --no-log-init -r -g spotify -u 2002 spotify && \
-    mkdir /cache && \
-    chown spotify /cache
+RUN apk -U --no-cache add \
+    libgcc \
+    alsa-lib \
+    dbus-libs \
+    && addgroup -S spotify \
+    && adduser --system --ingroup spotify --no-create-home --disabled-password --uid 2002 spotify \
+    && mkdir /cache \
+    && chown spotify /cache
 
 # Copy the compiled binary from the builder stage
 COPY --from=builder /app/target/release/spotifyd /usr/local/bin/spotifyd
