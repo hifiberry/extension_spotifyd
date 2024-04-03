@@ -6,9 +6,6 @@ if [ ! -f /etc/spotifyd.conf ]; then
   cp spotifyd.conf.default /etc/spotifyd.conf
 fi
 
-cd `dirname $0`
-. /etc/hifiberry.state
-
 HW=hw:${CURRENT_HW_SHORT}
 MIXER=${CURRENT_MIXER_CONTROL}
 
@@ -17,5 +14,3 @@ CFG=/etc/spotifyd.conf
 sed -i "s/device *= *\"[^\"]*\"/device = \"$HW\"/g" $CFG
 sed -i "s/control *= *\"[^\"]*\"/control = \"$HW\"/g" $CFG
 sed -i "s/mixer *= *\"[^\"]*\"/mixer = \"$MIXER\"/g" $CFG
-
-echo "SpotifyD has been reconfigured, restarting"
