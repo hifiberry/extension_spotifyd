@@ -12,4 +12,3 @@ sed -i "s/control *= *\"[^\"]*\"/control = \"$HW\"/g" $CFG
 sed -i "s/mixer *= *\"[^\"]*\"/mixer = \"$MIXER\"/g" $CFG
 
 echo "SpotifyD has been reconfigured, restarting"
-docker-compose restart
