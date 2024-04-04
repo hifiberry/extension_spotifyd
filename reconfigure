@@ -1,6 +1,15 @@
 #!/usr/bin/python
 
 import re
+import os
+import shutil
+
+def get_script_directory():
+    # Get the absolute path of the current Python script
+    script_path = os.path.abspath(__file__)
+    # Get the directory containing the script
+    script_directory = os.path.dirname(script_path)
+    return script_directory
 
 def parse_config_file(file_path):
     config = {}
@@ -46,11 +55,43 @@ def update_spotifyd_config(config_file_path, replacements):
     return file_changed
 
 
+def fix_config_file(configFile, defaultFile):
+    # Initialize a flag to track if the configFile was removed
+    removed = False
+
+    # Check if the configFile exists and if it's empty or a directory
+    if os.path.exists(configFile):
+        if os.path.isfile(configFile) and os.path.getsize(configFile) == 0:
+            # If it's an empty file, remove it
+            os.remove(configFile)
+            removed = True
+        elif os.path.isdir(configFile) and not os.listdir(configFile):
+            # If it's an empty directory, remove it recursively
+            shutil.rmtree(configFile)
+            removed = True
+    else:
+        removed = True
+
+    # Check if the defaultFile exists and if configFile was removed
+    if os.path.exists(defaultFile) and removed:
+        # Copy the defaultFile to the configFile
+        shutil.copy(defaultFile, configFile)
+        print(f"File '{defaultFile}' copied to '{configFile}'")
+    elif not os.path.exists(defaultFile):
+        print(f"Source file '{defaultFile}' does not exist.")
+        sys.exit(1)
+
+
+configfile = "/etc/spotifyd.conf"
+default_configfile = get_script_directory()+"/spotifyd.conf.default"
+
+fix_config_file(configfile, default_configfile)
+
 config_dict = parse_config_file("/etc/hifiberry.state")
 replacements = {
     "mixer": config_dict["CURRENT_MIXER_CONTROL"],
     "device_name": config_dict["CURRENT_SYSNAME"]
 }
-changed = update_spotifyd_config("/etc/spotifyd.conf", replacements)
+changed = update_spotifyd_config(configfile, replacements)
 if changed:
     print("CHANGED")
