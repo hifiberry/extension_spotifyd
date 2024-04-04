@@ -1,16 +1,56 @@
-#!/bin/sh
-cd `dirname $0`
-. /etc/hifiberry.state
+#!/usr/bin/python
 
-if [ ! -f /etc/spotifyd.conf ]; then
-  cp spotifyd.conf.default /etc/spotifyd.conf
-fi
+import re
 
-HW=hw:${CURRENT_HW_SHORT}
-MIXER=${CURRENT_MIXER_CONTROL}
+def parse_config_file(file_path):
+    config = {}
+    with open(file_path, 'r') as file:
+        for line in file:
+            # Strip whitespace and newline characters from each line
+            line = line.strip()
+            # Skip empty lines or lines that start with a comment
+            if not line or line.startswith('#'):
+                continue
+            # Split each line at the first equal sign
+            key, value = line.split('=', 1)
+            # Remove quotes from the value if present
+            value = value.strip('"')
+            # Assign the key-value pair to the dictionary
+            config[key] = value
+    return config
 
-CFG=/etc/spotifyd.conf
 
-sed -i "s/device *= *\"[^\"]*\"/device = \"$HW\"/g" $CFG
-sed -i "s/control *= *\"[^\"]*\"/control = \"$HW\"/g" $CFG
-sed -i "s/mixer *= *\"[^\"]*\"/mixer = \"$MIXER\"/g" $CFG
+def update_spotifyd_config(config_file_path, replacements):
+    file_changed = False  # Flag to track if the file has been modified
+
+    # Read the current configuration
+    with open(config_file_path, 'r') as file:
+        lines = file.readlines()
+
+    # Prepare the file for writing
+    with open(config_file_path, 'w') as file:
+        for line in lines:
+            updated_line = line  # Assume no change to the line initially
+            for key, new_value in replacements.items():
+                # Create a regex pattern to match the key with any amount of whitespace around '='
+                pattern = re.compile(rf'^\s*{key}\s*=\s*".*?"\s*(#.*)?$|^\s*{key}\s*=\s*.*?\s*(#.*)?$', re.IGNORECASE)
+                match = pattern.match(line)
+
+                # If a match is found and needs update, prepare the updated line
+                if match and f'{key} = "{new_value}"' not in line:
+                    updated_line = f'{key} = "{new_value}"  # Automatically updated by reconfigure script\n'
+                    file_changed = True  # Indicate a change has been made
+
+            file.write(updated_line)  # Write the updated (or original) line to the file
+
+    return file_changed
+
+
+config_dict = parse_config_file("/etc/hifiberry.state")
+replacements = {
+    "mixer": config_dict["CURRENT_MIXER_CONTROL"],
+    "device_name": config_dict["CURRENT_SYSNAME"]
+}
+changed = update_spotifyd_config("/etc/spotifyd.conf", replacements)
+if changed:
+    print("CHANGED")
