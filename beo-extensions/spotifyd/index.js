@@ -2,7 +2,9 @@
 const { updateAttribValueConfig, 
         getExtensionStatus, 
         setExtensionStatus,
-        parseConfigFile } = 
+        restartExtension,
+        parseConfigFile,
+        applyChangesPreservingComments } = 
  require(global.beo.extensionDirectory+'/hbosextensions/utilities');
 
 const extensionName = "spotifyd"
@@ -67,33 +69,98 @@ beo.bus.on('general', function(event) {
     }
 });
 
-
-
 // Listen for events related to Spotify
 beo.bus.on('spotifyd', function(event) {
-    if (event.header == "spotifydEnabled") {
-        if (event.content.enabled !== undefined) {
-            setExtensionStatus(extensionName, event.content.enabled, function(newStatus, error) {
-                // Emit updated settings to UI
-                beo.bus.emit("ui", {target: "spotifyd", header: "spotifydSettings", content: spotifydsettings});
-                
-                // Update source options based on new status
-                if (sources) sources.setSourceOptions("spotifyd", {enabled: newStatus});
-                
-                // Handle deactivation
-                if (newStatus === false) {
-                    if (sources) sources.sourceDeactivated("spotifyd");
-                }
-                
-                // Handle errors
-                if (error) {
-                    beo.bus.emit("ui", {target: "spotifyd", header: "errorTogglingSpotify", content: {}});
-                }
-            });
-        }
-    }
-});
 
+console.log(event)
+
+  if (event.header == "spotifydEnabled") {
+    if (event.content.enabled !== undefined) {
+      setExtensionStatus(extensionName, event.content.enabled, function(newStatus, error) {
+        // Emit updated settings to UI
+        beo.bus.emit("ui", {target: "spotifyd", header: "spotifydSettings", content: spotifydsettings});
+
+        // Update source options based on new status
+        if (sources) sources.setSourceOptions("spotifyd", {enabled: newStatus});
+
+        // Handle deactivation
+        if (newStatus === false) {
+          if (sources) sources.sourceDeactivated("spotifyd");
+        }
+
+        // Handle errors
+        if (error) {
+          beo.bus.emit("ui", {target: "spotifyd", header: "errorTogglingSpotifyd", content: {}});
+        }
+      });
+    }
+  }
+
+
+  if (event.header == "login") {
+    if (event.content.username && event.content.password) {
+      try {
+        // Apply new login credentials
+        applyChangesPreservingComments(configFile, [
+          { section: "global", option: "username", value: event.content.username },
+          { section: "global", option: "password", value: event.content.password }
+        ]);
+
+        // Restart the service to apply changes
+        restartExtension('spotifyd', (success, error) => {
+          if (error) {
+            console.error("Failed to restart the service:", error);
+            beo.bus.emit("ui", { target: "spotifyd", header: "serviceRestartError" });
+            return; // Exit if unable to restart the service
+          }
+
+          // Update settings to reflect the changes made
+          settings.loggedInAs = event.content.username;
+
+          // Notify the UI about the updated settings
+          beo.bus.emit("ui", { target: "spotifyd", header: "spotifydSettings", content: settings });
+
+          console.log("Service restarted successfully.");
+        });
+      } catch (error) {
+        console.error("Failed to apply login credentials:", error);
+        // Optionally, notify the UI about the failure to update the configuration
+        beo.bus.emit("ui", { target: "spotifyd", header: "logInError" });
+        // Further error handling or logging as needed
+      }
+    }
+  }
+
+  if (event.header == "logout") {
+    settings.loggedInAs = false;
+    try {
+      applyChangesPreservingComments(configFile, [
+        { section: "global", option: "username", remove: true },
+        { section: "global", option: "password", remove: true }
+      ]);
+
+      // Restart the service to apply changes
+      restartExtension('spotifyd', (success, error) => {
+        if (error) {
+          console.error("Failed to restart the service:", error);
+          beo.bus.emit("ui", { target: "spotifyd", header: "serviceRestartError" });
+          return; // Exit if unable to restart the service
+        }
+
+        // If changes are applied successfully and service is restarted, emit the updated settings
+        beo.bus.emit("ui", { target: "spotifyd", header: "spotifydSettings", content: settings });
+        console.log("Service restarted successfully.");
+      });
+    } catch (error) {
+      // Log the error or handle it as needed
+      console.error("Failed to apply changes to the configuration file:", error);
+      // Optionally, notify the UI about the error
+      beo.bus.emit("ui", { target: "spotifyd", header: "configurationError", content: { error: "Failed to update settings" } });
+    }
+  }
+
+
+});
 
 module.exports = {
 	version: version,

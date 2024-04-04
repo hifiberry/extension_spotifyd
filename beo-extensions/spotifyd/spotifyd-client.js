@@ -13,7 +13,6 @@ $(document).on("spotifyd", function(event, data) {
 			spotifydEnabled = false;
 			$("#spotifyd-enabled-toggle").removeClass("on");
 		}
-                console.log("1");
 		if (data.content.loggedInAs) {
 			$("#spotifyd-logged-in-section").removeClass("hidden");
 			$("#spotifyd-logged-out-section").addClass("hidden");
@@ -23,7 +22,7 @@ $(document).on("spotifyd", function(event, data) {
 			$("#spotifyd-logged-out-section").removeClass("hidden");
 			$(".spotifyd-username").text("");
 		}
-		beo.notify(false, "spotifyd");
+                beo.notify();
 	}
 	
 	if (data.header == "logInError") {
@@ -44,26 +43,26 @@ function toggleEnabled() {
 	beo.send({target: "spotifyd", header: "spotifydEnabled", content: {enabled: enabled}});
 }
 
-function logIn() {
+function login() {
 	
 	beo.startTextInput(3, "Log In with Spotify", "Enter your Spotify user name and password.", {placeholders: {password: "Password", text: "User name"}, minLength: {text: 2, password: 3}}, function(input) {
 		if (input) {
-			beo.send({target: "spotifyd", header: "logIn", content: {username: input.text, password: input.password}});
+			beo.send({target: "spotifyd", header: "login", content: {username: input.text, password: input.password}});
 			beo.notify({title: "Updating settings...", icon: "attention", timeout: false, id: "spotify"});
 		}
 	});
 }
 
-function logOut() {
-	beo.send({target: "spotifyd", header: "logOut"});
+function logout() {
+	beo.send({target: "spotifyd", header: "logout"});
 	beo.notify({title: "Updating settings...", icon: "attention", timeout: false, id: "spotify"});
 }
 
 
 return {
 	toggleEnabled: toggleEnabled,
-	logIn: logIn,
-	logOut: logOut
+	login: login,
+	logout: logout
 };
 
 })();
