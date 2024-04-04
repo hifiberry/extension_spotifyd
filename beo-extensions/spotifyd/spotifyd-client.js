@@ -13,7 +13,7 @@ $(document).on("spotifyd", function(event, data) {
 			spotifydEnabled = false;
 			$("#spotifyd-enabled-toggle").removeClass("on");
 		}
-		
+                console.log("1");
 		if (data.content.loggedInAs) {
 			$("#spotifyd-logged-in-section").removeClass("hidden");
 			$("#spotifyd-logged-out-section").addClass("hidden");
@@ -23,7 +23,7 @@ $(document).on("spotifyd", function(event, data) {
 			$("#spotifyd-logged-out-section").removeClass("hidden");
 			$(".spotifyd-username").text("");
 		}
-		beo.notify(false, "spotify");
+		beo.notify(false, "spotifyd");
 	}
 	
 	if (data.header == "logInError") {
