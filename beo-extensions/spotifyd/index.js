@@ -78,13 +78,14 @@ console.log(event)
     if (event.content.enabled !== undefined) {
       setExtensionStatus(extensionName, event.content.enabled, function(newStatus, error) {
         // Emit updated settings to UI
+        spotifydsettings.spotifydEnabled = event.content.enabled
         beo.bus.emit("ui", {target: "spotifyd", header: "spotifydSettings", content: spotifydsettings});
 
         // Update source options based on new status
-        if (sources) sources.setSourceOptions("spotifyd", {enabled: newStatus});
+        if (sources) sources.setSourceOptions("spotifyd", {enabled:  event.content.enabled});
 
         // Handle deactivation
-        if (newStatus === false) {
+        if (event.content.enabled === false) {
           if (sources) sources.sourceDeactivated("spotifyd");
         }
 
