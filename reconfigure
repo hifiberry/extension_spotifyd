@@ -94,10 +94,14 @@ def copy_if_different(source_file, destination_file):
 
 # DBUS Configuration
 if copy_if_different(get_script_directory()+"/dbus-spotifyd.conf","/etc/dbus-1/system.d/spotifyd.conf"):
-    result = subprocess.run(["systemctl", "restart", "dbus"])
-    if result.returncode != 0:
-        print("Could not restart dbus")
-        sys.exit(result.returncode)
+    if is_multiuser():
+        result = subprocess.run(["systemctl", "restart", "dbus"])
+        if result.returncode != 0:
+            print("Could not restart dbus")
+            sys.exit(result.returncode)
+    else:
+        with open("/tmp/reboot", "a") as f:
+            f.write("squeezelite dbus configuration")
 
 # Spotfiyd config file
 configfile = "/etc/spotifyd.conf"
