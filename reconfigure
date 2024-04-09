@@ -6,6 +6,10 @@ import shutil
 import subprocess
 import filecmp
 
+def is_multiuser():
+    result = subprocess.run(["systemctl", "is-system-running"], capture_output=True, text=True)
+    return result.stdout.strip() == "multi-user"
+
 def get_script_directory():
     # Get the absolute path of the current Python script
     script_path = os.path.abspath(__file__)
