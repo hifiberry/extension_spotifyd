@@ -1,8 +1,8 @@
-<div class="menu-screen source" id="spotifyd" data-icon="spotify.svg" data-menu-title="Spotifyd">
+<div class="menu-screen source" id="spotifyd" data-icon="spotify.svg" data-menu-title="Spotify Daemon">
 	
 	<header>
 		<div class="back-button master"></div>
-		<h1>Spotify Connect</h1>
+		<h1>Spotify Daemon</h1>
 	</header>
 	
 	<div class="scroll-area">
@@ -26,6 +26,17 @@
 			
 			<p class="margin-top">Stream and control music from the Spotify application. A Premium subscription is required.</p>
 			<p>Spotify Connect support is powered by the <a href=" https://github.com/Spotifyd/spotifyd.git" target="_blank">Spotifyd</a> open-source project.</p>
+
+			<hr />
+
+			<div class="menu-item toggle" id="spotifyd-mpris-toggle" onclick="spotifyd.toggleMPRIS();">
+				<div class="menu-label">Metadata and control support</div>
+				<div class="menu-toggle"></div>
+			</div>
+			<p>When disabling this, Spotifyd might run more stable, but you won't see metadata 
+				in "Now Playing" and you won't be able to control it from there.</p>
+
+
 		</div>
 	</div>
 	

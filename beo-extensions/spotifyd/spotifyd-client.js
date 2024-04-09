@@ -1,6 +1,7 @@
 var spotifyd = (function() {
 
 var spotifydEnabled = false;
+var spotifydMPRIS = false;
 
 
 $(document).on("spotifyd", function(event, data) {
@@ -13,6 +14,14 @@ $(document).on("spotifyd", function(event, data) {
 			spotifydEnabled = false;
 			$("#spotifyd-enabled-toggle").removeClass("on");
 		}
+		if (data.content.mpris) {
+			spotifydMPRIS = true;
+			$("#spotifyd-mpris-toggle").addClass("on");
+		} else {
+			spotifydEnabled = false;
+			$("#spotifyd-mpris-toggle").removeClass("on");
+		}
+
 		if (data.content.loggedInAs) {
 			$("#spotifyd-logged-in-section").removeClass("hidden");
 			$("#spotifyd-logged-out-section").addClass("hidden");
@@ -43,6 +52,18 @@ function toggleEnabled() {
 	beo.send({target: "spotifyd", header: "spotifydEnabled", content: {enabled: enabled}});
 }
 
+function toggleMPRIS() {
+	enabled = (!spotifydMPRIS) ? true : false;
+	if (enabled) {
+		beo.notify({title: "Turning MPRIS on...", icon: "attention", timeout: false});
+	} else {
+		beo.notify({title: "Turning MPRIS off...", icon: "attention", timeout: false});
+	}
+        console.log("en");
+	beo.send({target: "spotifyd", header: "spotifydMPRIS", content: {enabled: enabled}});
+}
+
+
 function login() {
 	
 	beo.startTextInput(3, "Log In with Spotify", "Enter your Spotify user name and password.", {placeholders: {password: "Password", text: "User name"}, minLength: {text: 2, password: 3}}, function(input) {
@@ -61,6 +82,7 @@ function logout() {
 
 return {
 	toggleEnabled: toggleEnabled,
+	toggleMPRIS: toggleMPRIS,
 	login: login,
 	logout: logout
 };
