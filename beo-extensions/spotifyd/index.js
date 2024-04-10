@@ -127,8 +127,8 @@
         // Further error handling or logging as needed
       }
 
-      restartExtension('spotifyd', (success, error) => {
-          if (error) {
+      restartExtension('spotifyd', (success) => {
+          if (! success) {
             console.error("Failed to restart the service:", error);
             beo.bus.emit("ui", { target: "spotifyd", header: "serviceRestartError" });
             return; // Exit if unable to restart the service
@@ -150,8 +150,8 @@
           ]);
 
           // Restart the service to apply changes
-          restartExtension('spotifyd', (success, error) => {
-            if (error) {
+          restartExtension('spotifyd', (success) => {
+            if (! success) {
               console.error("Failed to restart the service:", error);
               beo.bus.emit("ui", { target: "spotifyd", header: "serviceRestartError" });
               return; // Exit if unable to restart the service
@@ -183,8 +183,8 @@
         ]);
 
         // Restart the service to apply changes
-        restartExtension('spotifyd', (success, error) => {
-          if (error) {
+        restartExtension('spotifyd', (success) => {
+          if (! success) {
             console.error("Failed to restart the service:", error);
             beo.bus.emit("ui", { target: "spotifyd", header: "serviceRestartError" });
             return; // Exit if unable to restart the service
