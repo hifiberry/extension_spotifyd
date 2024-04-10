@@ -1,6 +1,6 @@
 var spotifyd = (function() {
 
-var spotifydEnabled = false;
+var spotifydEnabled = undefined;
 var spotifydMPRIS = false;
 
 
@@ -14,11 +14,12 @@ $(document).on("spotifyd", function(event, data) {
 			spotifydEnabled = false;
 			$("#spotifyd-enabled-toggle").removeClass("on");
 		}
+
 		if (data.content.mpris) {
 			spotifydMPRIS = true;
 			$("#spotifyd-mpris-toggle").addClass("on");
 		} else {
-			spotifydEnabled = false;
+			spotifydMPRIS = false;
 			$("#spotifyd-mpris-toggle").removeClass("on");
 		}
 
@@ -48,7 +49,6 @@ function toggleEnabled() {
 	} else {
 		beo.notify({title: "Turning Spotifyd off...", icon: "attention", timeout: false});
 	}
-        console.log("en");
 	beo.send({target: "spotifyd", header: "spotifydEnabled", content: {enabled: enabled}});
 }
 
