@@ -17,5 +17,9 @@ services:
       - /etc/spotifyd.conf:/etc/spotifyd.conf
       - /etc/asound.conf:/etc/asound.conf
       - /run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
+      - cache:/cache
     group_add:
       - 2001
+
+volumes:
+  cache:
