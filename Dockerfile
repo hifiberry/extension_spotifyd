@@ -33,11 +33,12 @@ RUN apt-get update && \
 
 # Copy the compiled binary from the builder stage
 COPY --from=builder /app/target/release/spotifyd /usr/local/bin/spotifyd
+COPY docker/start-spotifyd /start-spotifyd
 
 # Set working directory
 WORKDIR /usr/local/bin
 
 # Run spotifyd
-CMD ["/usr/local/bin/spotifyd", "--no-daemon"]
+CMD ["/start-spotifyd"]
 
 USER spotify
