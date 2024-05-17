@@ -3,12 +3,12 @@ services:
   spotify:
     container_name: spotifyd
     restart: always
-    #image: ghcr.io/hifiberry/extension_spotifyd:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - SPOTIFY_CLIENT_ID=2c1ea588dfbc4a989e2426f8385297c3
+    image: ghcr.io/hifiberry/extension_spotifyd:0.3.5.3
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile
+    #  args:
+    #    - SPOTIFY_CLIENT_ID=2c1ea588dfbc4a989e2426f8385297c3
     network_mode: host
     devices:
       - /dev/snd:/dev/snd

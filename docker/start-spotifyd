@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/sh
 
 # Read the mixer control name from /etc/hifiberry.state
 MIXER_CONTROL=$(grep 'CURRENT_MIXER_CONTROL=' /etc/hifiberry.state | cut -d'"' -f2)
@@ -16,9 +16,10 @@ MIXER_VALUE=$(amixer get "$MIXER_CONTROL" | grep -o '[0-9]*%' | head -n1 | tr -d
 if [ -z "$MIXER_VALUE" ]; then
   echo "Could not retrieve the mixer value, can't set initial value"
   MIXEROPTION=""
-else 
-  echo "Setting initial voluem to $MIXER_VALUE
+else
+  echo "Setting initial volume to $MIXER_VALUE"
   MIXEROPTION="--initial-volume $MIXER_VALUE"
 fi
 
 /usr/local/bin/spotifyd --no-daemon $MIXEROPTION
+
