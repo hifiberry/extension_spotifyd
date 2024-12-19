@@ -49,9 +49,9 @@ RUN cargo build -j 4 --release --features dbus_mpris
 # Create a new image
 FROM debian:stable-slim
 
-# Install dependencies
+# Install dependencies including PipeWire client libraries
 RUN apt-get update && \
-    apt-get install -yqq --no-install-recommends libasound2 dbus curl alsa-tools alsa-utils && \
+    apt-get install -yqq --no-install-recommends libasound2 dbus curl alsa-tools alsa-utils pipewire-audio-client-libraries && \
     rm -rf /var/lib/apt/lists/* && \
     groupadd -r spotify && \
     useradd --no-log-init -r -g spotify -u 2002 spotify && \
