@@ -2,8 +2,18 @@
 cd `dirname $0`
 . /etc/hifiberry.state
 
-if [ ! -f /etc/spotifyd.conf ]; then
+# Check if /etc/spotifyd.conf is a directory
+if [ -d /etc/spotifyd.conf ]; then
+  echo "Found /etc/spotifyd.conf as a directory, removing it."
+  rm -r /etc/spotifyd.conf
+fi
+
+# Check if the file does not exist or is empty
+if [ ! -f /etc/spotifyd.conf ] || [ ! -s /etc/spotifyd.conf ]; then
   cp spotifyd.conf.default /etc/spotifyd.conf
+  echo "Configuration file has been copied."
+else
+  echo "Existing configuration file is valid and not empty."
 fi
 
 grep "/etc/spotifyd.conf" /etc/config-files
@@ -20,7 +30,7 @@ cat <<EOF>/etc/dbus-1/system.d/spotifyd.conf
 
  <!-- Root can own the Spotify service -->
   <policy user="player">
-    <allow own="org.mpris.MediaPlayer2.spotifyd"/>
+    <allow own_prefix="org.mpris.MediaPlayer2.spotifyd"/>
   </policy>
 
 </busconfig>
