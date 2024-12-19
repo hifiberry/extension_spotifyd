@@ -5,6 +5,7 @@ if [ "$SPOTIFY_CLIENT_ID" == "" ]; then
 else
  echo "Using Spotify client ID $SPOTIFY_CLIENT_ID"
 fi
-docker system prune -a
-docker build -t spotifyd .
+VERSION=`cat version`
+docker system prune -a -f
+docker build -t spotifyd:$VERSION .
 
